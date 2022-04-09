@@ -1,25 +1,34 @@
 import 'package:master_plan/models/data_layer.dart';
+import 'package:master_plan/services/plan_services.dart';
 
 class PlanController {
-  final _plans = <Plan>[];
+  // final _plans = <Plan>[];
+  final services = PlanServices();
 
   // this cannot be modified by any other object
-  List<Plan> get plans => List.unmodifiable(_plans);
+  // List<Plan> get plans => List.unmodifiable(_plans);
+  List<Plan> get plans => List.unmodifiable(services.getAllPlans());
 
   void addNewPlan(String name) {
     if (name.isEmpty) {
       return;
     }
 
-    name = _checkForDuplicates(_plans.map((plan) => plan.name), name);
+    name = _checkForDuplicates(plans.map((plan) => plan.name), name);
+    services.createPlan(name);
 
-    final plan = Plan()..name = name;
+    // final plan = Plan()..name = name;
 
-    _plans.add(plan);
+    // _plans.add(plan);
+  }
+
+  void savePlan(plan) {
+    services.savePlan(plan);
   }
 
   void deletePlan(Plan plan) {
-    _plans.remove(plan);
+    // _plans.remove(plan);
+    services.delete(plan);
   }
 
 // is this [] for positional optional?
@@ -31,13 +40,15 @@ class PlanController {
     description = _checkForDuplicates(
         plan.tasks.map((task) => task.description), description);
 
-    final task = Task()..description = description;
+    // final task = Task()..description = description;
+    services.addTask(plan, description);
 
-    plan.tasks.add(task);
+    // plan.tasks.add(task);
   }
 
   void deleteTask(Plan plan, Task task) {
-    plan.tasks.remove(task);
+    // plan.tasks.remove(task);
+    services.deleteTask(plan, task);
   }
 
   String _checkForDuplicates(Iterable<String> items, String text) {

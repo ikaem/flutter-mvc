@@ -44,15 +44,24 @@ class _PlanScreenState extends State<PlanScreen> {
   @override
   Widget build(BuildContext context) {
     // final plan = PlanProvider.of(context);
-    return Scaffold(
-      appBar: AppBar(title: Text("Master Plan")),
-      body: Column(
-        children: [
-          Expanded(child: _buildList()),
-          SafeArea(child: Text(plan.completenessMessage))
-        ],
+    return WillPopScope(
+      onWillPop: () {
+        final controller = PlanProvider.of(context);
+
+        // we now just save whatever is current plan here - to sync it with repsositroy
+        controller.savePlan(plan);
+        return Future.value(true);
+      },
+      child: Scaffold(
+        appBar: AppBar(title: Text("Master Plan")),
+        body: Column(
+          children: [
+            Expanded(child: _buildList()),
+            SafeArea(child: Text(plan.completenessMessage))
+          ],
+        ),
+        floatingActionButton: _buildAddTaskButton(),
       ),
-      floatingActionButton: _buildAddTaskButton(),
     );
   }
 
